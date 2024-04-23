@@ -1,0 +1,19 @@
+{
+  "name": "winnie-blue-bot",
+  "version": "1.0.0",
+  "description": "Automatic discord role management via WiseOldMan.",
+  "main": "run.js",
+  "scripts": {
+    "start": "node run.js"
+  },
+  "keywords": [],
+  "author": "Roelof",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@wise-old-man/utils": "^3.3.1",
+    "discord-api-types": "^0.37.75",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3"
+  }
+}
