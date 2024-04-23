@@ -87,7 +87,7 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 
 ### Reactions
 
-- **Reacts** with 🫡 to all messages sent in the ``#🥳-⊱newcomers`` channel
+- **Reacts** with 🫡 to all messages sent in the ``#🥳-⊱newcomers`` channel.
 
 ### Status Updates
 
