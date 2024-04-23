@@ -56,12 +56,15 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 
 - **Updates**: Automatically refreshes WOM group data nightly at midnight (AEST).
 
+### Reactions
+
+- Reacts with 🫡 to all messages sent in the ``#🥳-⊱newcomers`` channel
+  
 ### Role Management
 
 - **Sync Interval**: Synchronizes roles from the WOM group every ``5 minutes``.
-- **Nickname Lookup**: Matches Discord nicknames to WOM group data. If the user has multiple RSNs (using any of `/&|`),
-  the highest rank is
-  assigned.
+- **Nickname Lookup**: Matches Discord nicknames to WOM group data. If the user has multiple RSNs (separated using any of `/&|`),
+  the highest rank is assigned.
 - **Role Assignment**: Assigns roles based on WOM rank names (e.g., `@Recruit`).
     - Automatically creates roles if they don't exist.
 - **Exclusions**: Does not assign ranks of `Saviour`, `Deputy Owner`, or `Owner`.
@@ -72,9 +75,7 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 - **Set RSN**: `/rsn <your-rsn>` sets the supplied rsn as the users nickname in the server, facilitating role
   synchronization.
 
-### Dynamic Status Updates
+### Status Updates
 
-- **Frequency**: Changes the bot's status every minute with random wom from WOM, including skill levels, boss
-  kill
-  counts, and activity scores.
-- **Data Refresh**: Fetches new data from the WOM API every 6 hours to ensure status updates remain current.
+- **Frequency**: Changes the bot's status every minute with random stat from the clan.
+- **Data Refresh**: Fetches new data from the WiseOldMan API every 6 hours.
