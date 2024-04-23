@@ -1,4 +1,4 @@
-# Winnie Blues Discord Bot
+![image](https://github.com/R0310F/winnie-blues-bot/assets/40754039/c06328a9-b3c3-4ad3-93dc-88596f87eedd)![image](https://github.com/R0310F/winnie-blues-bot/assets/40754039/2acef9ff-9d63-467c-a20b-74796006eeeb)# Winnie Blues Discord Bot
 
 # Table of Contents
 - [Winnie Blues Discord Bot](#winnie-blues-discord-bot)
@@ -69,29 +69,29 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 
 ### Auto-Tracking
 
-- **Updates**: Automatically refreshes WOM group data nightly at midnight (AEST).
+- **Automatically refreshes** WOM group data nightly at midnight (AEST).
 
 ### Reactions
 
-- Reacts with 🫡 to all messages sent in the ``#🥳-⊱newcomers`` channel
+- **Reacts** with 🫡 to all messages sent in the ``#🥳-⊱newcomers`` channel
   
 ### Role Management
 
-- **Sync Interval**: Synchronizes roles from the WOM group every ``5th minute`` (e.g., xx:00, xx:05, xx:10, xx:15, etc...).
-- **Role Assignment**: Assigns roles using the WOM Groups rank names (e.g., `@Recruit`, `@Monarch`, `@Senator`).
-    - Automatically creates roles if they don't exist.
-- **Exclusions**: Has explicit restrictions preventing `@Saviour`, `@Deputy Owner`, or `@Owner` from automatically being assigned.
-    - Keep the ``@<bot-name`` role below these roles to be extra cautious. The bot cannot assign any roles above its own.
-- **Nickname Lookup**: Looks at each members discord nickname and searches for it in the WOM Group. Members can have multiple RSNs in their nickname, as long as they have ``|``, ``&`` or ``/`` to delimit each RSN.
+- **Synchronizes roles** from the WOM group every ``5th minute`` (e.g. xx:00, xx:05, xx:10, xx:15, etc...).
+    - **Assigns roles** using the WOM Groups rank names (e.g., `@Recruit`, `@Monarch`, `@Senator`).
+    - **Creates roles** if they don't exist.
+    - Has explicit restrictions preventing `@Saviour`, `@Deputy Owner`, or `@Owner` from automatically being assigned.
+        - Keep the ``@<bot-name`` role below these roles to be extra cautious. The bot cannot assign any roles above its own.
+- **Looks up** each members Discord nickname in the WOM group. Members can have multiple RSNs in their nickname, as long as they have ``|``, ``&`` or ``/`` to delimit each RSN.
     - e.g. If a member has the nickname ``"Roelof | Foleor / Loroef"``, we split and collect each RSN.
     - For members with multiple names, all names are looked up in the WOM Group and the highest applicable role is given to the user.
-- **Guest Role**: Assigns `@Guest` for any member whos nickname is not found in the WOM Group.
+- **Assigns `@Guest`** for any member whos nickname is not found in the WOM Group.
 
 ### Commands
 
-- **Set RSN**: `/rsn <your-rsn>` sets the supplied rsn as the users nickname in the server.
+- **`/rsn <your-rsn>`** sets the supplied rsn as the users nickname in the server.
 
 ### Status Updates
 
-- **Frequency**: Changes the bot's status every minute with random stat from the clan.
-- **Data Refresh**: Fetches new data from the WiseOldMan API every ``6th hour`` (e.g., 00:00, 06:00, 12:00, 18:00).
+- **Updates** the bot's status **every minute** with random stats from the clan.
+- **Fetches** new data from the WiseOldMan API every ``6th hour`` (e.g. 00:00, 06:00, 12:00, 18:00).
