@@ -1,5 +1,3 @@
-![image](https://github.com/R0310F/winnie-blues-bot/assets/40754039/c06328a9-b3c3-4ad3-93dc-88596f87eedd)![image](https://github.com/R0310F/winnie-blues-bot/assets/40754039/2acef9ff-9d63-467c-a20b-74796006eeeb)# Winnie Blues Discord Bot
-
 # Table of Contents
 - [Winnie Blues Discord Bot](#winnie-blues-discord-bot)
   - [Pre-setup](#pre-setup)
@@ -70,22 +68,22 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 ### Auto-Tracking
 
 - **Automatically refreshes** WOM group data nightly at midnight (AEST).
+  
+### Automated Rank-Roles
+
+- Every `5th minute` (e.g. xx:00, xx:05, xx:10, xx:15, ...) the bot utilizes the WiseOldMan API to fetch a list of all in-game member names and ranks.
+- The bot then looks up all members in any Discord servers it's in, and checks if their nickname matches within the in-game names.
+- The bot checks for multiple RSNs in member nicknames, looking for: `|`, `&` or `/` to delimit each RSN.
+    - e.g. If a member has the nickname `"Roelof | Foleor / Loroef"`, we split and collect each RSN.
+- Members whose nickname matches one of the in-game names are assigned their rank-roles automatically.
+    - The bot will automatically create roles if they do not exist in the server.
+    - For members with multiple names, all names are looked up, and the highest applicable rank-role is given to the user.
+    - There are explicit restrictions preventing `@Saviour`, `@Deputy Owner`, or `@Owner` from automatically being assigned.
+    - Members who are not found within the in-game names are given the `@Guest` rank-role.
 
 ### Reactions
 
 - **Reacts** with 🫡 to all messages sent in the ``#🥳-⊱newcomers`` channel
-  
-### Role Management
-
-- **Synchronizes roles** from the WOM group every ``5th minute`` (e.g. xx:00, xx:05, xx:10, xx:15, etc...).
-    - **Assigns roles** using the WOM Groups rank names (e.g., `@Recruit`, `@Monarch`, `@Senator`).
-    - **Creates roles** if they don't exist.
-    - Has explicit restrictions preventing `@Saviour`, `@Deputy Owner`, or `@Owner` from automatically being assigned.
-        - Keep the ``@<bot-name`` role below these roles to be extra cautious. The bot cannot assign any roles above its own.
-- **Looks up** each members Discord nickname in the WOM group. Members can have multiple RSNs in their nickname, as long as they have ``|``, ``&`` or ``/`` to delimit each RSN.
-    - e.g. If a member has the nickname ``"Roelof | Foleor / Loroef"``, we split and collect each RSN.
-    - For members with multiple names, all names are looked up in the WOM Group and the highest applicable role is given to the user.
-- **Assigns `@Guest`** for any member whos nickname is not found in the WOM Group.
 
 ### Commands
 
