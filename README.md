@@ -73,7 +73,7 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 
 - Every `5th minute` (e.g. xx:00, xx:05, xx:10, xx:15, ...) the bot utilizes the WiseOldMan API to fetch a list of all in-game member names and ranks.
 - The bot then looks up all members in any Discord servers it's in, and checks if their nickname matches within the in-game names.
-- The bot checks for multiple RSNs in member nicknames, looking for: `|`, `&` or `/` to delimit each RSN.
+- Multiple RSNs are supported in member nicknames, members should use: `|`, `&` or `/` to delimit each RSN.
     - e.g. If a member has the nickname `"Roelof | Foleor / Loroef"`, we split and collect each RSN.
 - Members whose nickname matches one of the in-game names are assigned their rank-roles automatically.
     - The bot will automatically create roles if they do not exist in the server.
