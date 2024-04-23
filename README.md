@@ -62,20 +62,21 @@ When invited to a server, the bot creates a `@<bot-name>` role.
   
 ### Role Management
 
-- **Sync Interval**: Synchronizes roles from the WOM group every ``5 minutes``.
-- **Nickname Lookup**: Matches Discord nicknames to WOM group data. If the user has multiple RSNs (separated using any of `/&|`),
-  the highest rank is assigned.
-- **Role Assignment**: Assigns roles based on WOM rank names (e.g., `@Recruit`).
+- **Sync Interval**: Synchronizes roles from the WOM group every ``5th minute`` (e.g., xx:00, xx:05, xx:10, xx:15, etc...).
+- **Role Assignment**: Assigns roles using the WOM Groups rank names (e.g., `@Recruit`, `@Monarch`, `@Senator`).
     - Automatically creates roles if they don't exist.
-- **Exclusions**: Does not assign ranks of `Saviour`, `Deputy Owner`, or `Owner`.
-- **Fallback Role**: Assigns `@guest` for users not found in the WOM group.
+- **Exclusions**: Has explicit restrictions preventing `@Saviour`, `@Deputy Owner`, or `@Owner` from automatically being assigned.
+    - Keep the ``@<bot-name`` role below these roles to be extra cautious. The bot cannot assign any roles above its own.
+- **Nickname Lookup**: Looks at each members discord nickname and searches for it in the WOM Group. Members can have multiple RSNs in their nickname, as long as they have ``|``, ``&`` or ``/`` to delimit each RSN.
+    - e.g. If a member has the nickname ``"Roelof | Foleor / Loroef"``, we split and collect each RSN.
+    - For members with multiple names, all names are looked up in the WOM Group and the highest applicable role is given to the user.
+- **Guest Role**: Assigns `@Guest` for any member whos nickname is not found in the WOM Group.
 
 ### Commands
 
-- **Set RSN**: `/rsn <your-rsn>` sets the supplied rsn as the users nickname in the server, facilitating role
-  synchronization.
+- **Set RSN**: `/rsn <your-rsn>` sets the supplied rsn as the users nickname in the server.
 
 ### Status Updates
 
 - **Frequency**: Changes the bot's status every minute with random stat from the clan.
-- **Data Refresh**: Fetches new data from the WiseOldMan API every 6 hours.
+- **Data Refresh**: Fetches new data from the WiseOldMan API every ``6th hour`` (e.g., 00:00, 06:00, 12:00, 18:00).
