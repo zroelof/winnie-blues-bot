@@ -8,11 +8,8 @@
     - Run `node -v` and `npm -v` to ensure Node.js and npm are properly installed.
 
 - **Install Git**:
-    - Download Git from [Git SCM](https://git-scm.com/download/win).
-    - Run the downloaded `.exe` file to start the installer.
-    - Follow the installer steps, accept the license agreement, and keep the default settings unless specific changes
-      are required.
-    - After installation, open a `Command Prompt` or `PowerShell` window.
+    - Download and install Git from [Git SCM](https://git-scm.com/download/win).
+    - Open `Command Prompt` or `PowerShell`.
     - Run `git --version` to verify that Git is correctly installed.
 
 ## Installation Instructions
@@ -46,10 +43,10 @@
 
 ### Bot Permissions
 
-When invited to a server, the bot creates a `@Winnie Blue Bot` role.
+When invited to a server, the bot creates a `@<bot-name>` role.
 
 - Position this role above others that it will manage and below any sensitive roles.
-- Give the `@Winnie Blue Bot` role these permissions:
+- Give the `@<bot-name>` role these permissions:
     - Manage Roles
     - Manage Nicknames
 
