@@ -71,23 +71,23 @@ When invited to a server, the bot creates a `@<bot-name>` role.
   
 ### Automated Rank-Roles
 
-- Every `5th minute` (e.g. xx:00, xx:05, xx:10, xx:15, ...) the bot utilizes the WiseOldMan API to fetch a list of all in-game member names and ranks.
-- The bot then looks up all members in any Discord servers it's in, and checks if their nickname matches within the in-game names.
-- Multiple RSNs are supported in member nicknames, members should use: `|`, `&` or `/` to delimit each RSN.
-    - e.g. If a member has the nickname `"Roelof | Foleor / Loroef"`, we split and collect each RSN.
-- Members whose nickname matches one of the in-game names are assigned their rank-roles automatically.
-    - The bot will automatically create roles if they do not exist in the server.
-    - For members with multiple names, all names are looked up, and the highest applicable rank-role is given to the user.
+- Every `5th minute` (e.g. xx:00, xx:05, xx:10, xx:15, ...) the bot utilizes the WiseOldMan API to fetch a map of all in-game member rsns and their rank.
+- The bot then looks up all members in any Discord servers it's in, and checks if their nickname matches an in-game rsn.
+- Multiple RSNs are supported in member nicknames, use: `|`, `&` or `/` to delimit each RSN.
+    - e.g. If a member has the nickname `"Roelof | Foleor / Loroef"`, we split, trim and collect each RSN - which results in: `"Roelof", "Foleor", "Loroef"`.
+- Members whose nickname matches one of the in-game rsns are assigned their rank-roles automatically.
+    - The bot will automatically create rank-roles as required, if they do not exist in the server.
+    - For members with multiple names, all names are looked up and the highest applicable rank-role is given to the user.
     - There are explicit restrictions preventing `@Saviour`, `@Deputy Owner`, or `@Owner` from automatically being assigned.
-    - Members who are not found within the in-game names are given the `@Guest` rank-role.
-
-### Reactions
-
-- **Reacts** with 🫡 to all messages sent in the ``#🥳-⊱newcomers`` channel
+    - Members whose nickname does not match an in-game rsn are given the `@Guest` rank-role.
 
 ### Commands
 
 - **`/rsn <your-rsn>`** sets the supplied rsn as the users nickname in the server.
+
+### Reactions
+
+- **Reacts** with 🫡 to all messages sent in the ``#🥳-⊱newcomers`` channel
 
 ### Status Updates
 
