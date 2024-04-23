@@ -72,14 +72,14 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 ### Automated Rank-Roles
 
 - Every `5th minute` (e.g. xx:00, xx:05, xx:10, xx:15, ...) the bot utilizes the WiseOldMan API to fetch a map of all in-game member rsns and their rank.
-- The bot then looks up all members in any Discord servers it's in, and checks if their nickname matches an in-game rsn.
+- The bot then looks up all members in all of its Discord servers, and checks if their nickname matches an in-game rsn.
 - Multiple RSNs are supported in member nicknames, use: `|`, `&` or `/` to delimit each RSN.
-    - e.g. If a member has the nickname `"Roelof | Foleor / Loroef"`, we split, trim and collect each RSN - which results in: `"Roelof", "Foleor", "Loroef"`.
+    - e.g. If a member has the nickname `"Roelof | Foleor / Loroef"`, we split, trim and collect each RSN.<br>Which results in: `"Roelof", "Foleor", "Loroef"`.
 - Members whose nickname matches one of the in-game rsns are assigned their rank-roles automatically.
     - The bot will automatically create rank-roles as required, if they do not exist in the server.
     - For members with multiple names, all names are looked up and the highest applicable rank-role is given to the user.
     - There are explicit restrictions preventing `@Saviour`, `@Deputy Owner`, or `@Owner` from automatically being assigned.
-    - Members whose nickname does not match an in-game rsn are given the `@Guest` rank-role.
+    - Members whose nickname doesn't match an in-game rsn are given the `@Guest` rank-role.
 
 ### Commands
 
