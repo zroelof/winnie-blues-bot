@@ -1,5 +1,20 @@
 # Winnie Blues Discord Bot
 
+# Table of Contents
+- [Winnie Blues Discord Bot](#winnie-blues-discord-bot)
+  - [Pre-setup](#pre-setup)
+  - [Installation Instructions](#installation-instructions)
+    - [Setting Up the Environment](#setting-up-the-environment)
+    - [Configuring The Bot](#configuring-the-bot)
+    - [Running the Bot](#running-the-bot)
+    - [Bot Permissions](#bot-permissions)
+  - [Features](#features)
+    - [Auto-Tracking](#auto-tracking)
+    - [Reactions](#reactions)
+    - [Role Management](#role-management)
+    - [Commands](#commands)
+    - [Status Updates](#status-updates)
+
 ## Pre-setup
 
 - **Install Node.js**:
