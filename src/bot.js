@@ -36,7 +36,7 @@ bot.on('interactionCreate', async interaction => {
 });
 
 bot.on('messageCreate', async message => {
-    if (message.channel.name.endsWith("🥳-⊱newcomers")) {
+    if (message.channel.name.endsWith("-⊱newcomers")) {
         try {
             await message.react('🫡');
         } catch (error) {
