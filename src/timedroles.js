@@ -36,7 +36,7 @@ async function updateMessage() {
                 } else if (interaction.customId === 'next') {
                     currentPage = Math.min(currentPage + 1, pages.length - 1);
                 }
-                await message.update({
+                await message.edit({
                     content: title + pages[currentPage] + footer,
                     components: prepareComponents(pages.length > 1, currentPage, pages.length)
                 });
