@@ -2,12 +2,12 @@ const {ActionRowBuilder, ButtonBuilder} = require('discord.js');
 const {wom} = require("./wom");
 const {bot} = require("./bot");
 const {ChannelType, ButtonStyle} = require("discord-api-types/v10");
-const CHANNEL_NAME = '⏰-⊱time-based-ranks';
+const CHANNEL_NAME = 'time-based-ranks';
 
 async function updateMessage() {
     const guilds = bot.guilds.cache.values();
     for (const guild of guilds) {
-        let channel = guild.channels.cache.find(ch => ch.name === CHANNEL_NAME && ch.type === ChannelType.GuildText);
+        let channel = guild.channels.cache.find(ch => ch.name.endsWith(CHANNEL_NAME) && ch.type === ChannelType.GuildText);
         if (!channel) {
             console.log(`Channel "${CHANNEL_NAME}" not found in guild ${guild.name}, skipping update.`);
             continue;
