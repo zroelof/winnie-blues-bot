@@ -16,6 +16,7 @@ async function updateMessage() {
         const outdatedRanks = await checkTimeBasedRanks(process.env.WOM_GROUP_NUMBER);
         const pages = preparePages(outdatedRanks, emojis, 1500);
         let message = await findOrCreateMessage(channel);
+        await message.suppressEmbeds(true);
         let components = prepareComponents(pages.length > 1, 0, pages.length);
         const title = "## Timed Rank Role Status\n";
         const footer = getFooterNote();
@@ -25,9 +26,8 @@ async function updateMessage() {
             content,
             components
         });
-        await message.suppressEmbeds(true);
         let currentPage = 0;
-        const collector = message.createMessageComponentCollector({idle: 55000});
+        const collector = message.createMessageComponentCollector({idle: 65000});
         collector.on('collect', async interaction => {
             if (!interaction.isButton()) return;
             try {
@@ -43,6 +43,9 @@ async function updateMessage() {
             } catch (error) {
                 console.error('Error handling interaction:', error);
             }
+        });
+        collector.on('end', async () => {
+            await message.edit({components: []}); // Remove buttons after timeout
         });
     }
 }
@@ -155,7 +158,7 @@ async function checkTimeBasedRanks(groupId) {
 }
 
 function getRequiredRole(daysInClan) {
-    //if (daysInClan >= 60) return 'captain';
+    if (daysInClan >= 60) return 'captain';
     if (daysInClan >= 30) return 'sergeant';
     if (daysInClan >= 7) return 'corporal';
     return 'recruit';
