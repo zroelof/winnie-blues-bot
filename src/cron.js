@@ -3,12 +3,18 @@ const {wom} = require("./wom");
 const {bot} = require("./bot");
 const {updateStatus} = require("./status");
 const {syncRoles} = require("./roles");
+const {updateMessage} = require("./timedroles");
 
 const cronJobs = [
     {
-        sched: '*/5 * * * *', // Every 5 minutes
+        sched: '*/1 * * * *', // Every 1 minute
         run: () => syncRoles(bot),
         desc: 'role synchronization'
+    },
+    {
+        sched: '*/1 * * * *', // Every 1 minute
+        run: () => updateMessage(),
+        desc: 'timed role check'
     },
     {
         sched: '0 0 * * *', // Every day at midnight
