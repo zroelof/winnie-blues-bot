@@ -16,7 +16,6 @@ async function updateMessage() {
         const outdatedRanks = await checkTimeBasedRanks(process.env.WOM_GROUP_NUMBER);
         const pages = preparePages(outdatedRanks, emojis, 1500);
         let message = await findOrCreateMessage(channel);
-        await message.suppressEmbeds(true);
         let components = prepareComponents(pages.length > 1, 0, pages.length);
         const title = "## Timed Rank Role Status\n";
         const footer = getFooterNote();
@@ -26,6 +25,7 @@ async function updateMessage() {
             content,
             components
         });
+        await message.suppressEmbeds(true);
         let currentPage = 0;
         const collector = message.createMessageComponentCollector({idle: 60000});
         collector.on('collect', async interaction => {
