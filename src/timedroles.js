@@ -48,6 +48,8 @@ async function updateMessage() {
 }
 
 function preparePages(outdatedMembers, emojis, maxCharsPerPage) {
+    // Sort the members by highest to lowest days since joined
+    outdatedMembers.sort((a, b) => b.daysSinceJoined - a.daysSinceJoined);
     const pages = [];
     let currentPageContent = "";
     outdatedMembers.forEach(member => {
