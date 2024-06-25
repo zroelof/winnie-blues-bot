@@ -155,7 +155,7 @@ async function checkTimeBasedRanks(groupId) {
 }
 
 function getRequiredRole(daysInClan) {
-    if (daysInClan >= 60) return 'captain';
+    //if (daysInClan >= 60) return 'captain';
     if (daysInClan >= 30) return 'sergeant';
     if (daysInClan >= 7) return 'corporal';
     return 'recruit';
