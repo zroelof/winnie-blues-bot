@@ -14,7 +14,7 @@ async function updateMessage() {
         }
         const emojis = guild.emojis.cache;
         const outdatedRanks = await checkTimeBasedRanks(process.env.WOM_GROUP_NUMBER);
-        const pages = preparePages(outdatedRanks, emojis, 1800);
+        const pages = preparePages(outdatedRanks, emojis, 1500);
         let message = await findOrCreateMessage(channel);
         let components = prepareComponents(pages.length > 1, 0, pages.length);
         const title = "## Timed Rank Role Status\n";
@@ -36,7 +36,7 @@ async function updateMessage() {
                 } else if (interaction.customId === 'next') {
                     currentPage = Math.min(currentPage + 1, pages.length - 1);
                 }
-                await interaction.update({
+                await message.update({
                     content: title + pages[currentPage] + footer,
                     components: prepareComponents(pages.length > 1, currentPage, pages.length)
                 });
