@@ -2,7 +2,7 @@ const {ActionRowBuilder, ButtonBuilder} = require('discord.js');
 const {wom} = require("./wom");
 const {bot} = require("./bot");
 const {ChannelType, ButtonStyle} = require("discord-api-types/v10");
-const CHANNEL_NAME = 'time-based-ranks';
+const CHANNEL_NAME = '⏰-⊱time-based-ranks';
 
 async function updateMessage() {
     const guilds = bot.guilds.cache.values();
