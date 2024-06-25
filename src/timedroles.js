@@ -20,14 +20,14 @@ async function updateMessage() {
         let components = prepareComponents(pages.length > 1, 0, pages.length);
         const title = "## Timed Rank Role Status\n";
         const footer = getFooterNote();
-        let content = pages.length > 0 ? pages[0] : "\nAll ranks are up to date.";
+        let content = pages.length > 0 ? pages[0] : "\n**All ranks are up to date.**";
         content = title + content + footer;
         await message.edit({
             content,
             components
         });
         let currentPage = 0;
-        const collector = message.createMessageComponentCollector({idle: 65000});
+        const collector = message.createMessageComponentCollector({idle: 60000});
         collector.on('collect', async interaction => {
             if (!interaction.isButton()) return;
             try {
@@ -43,9 +43,6 @@ async function updateMessage() {
             } catch (error) {
                 console.error('Error handling interaction:', error);
             }
-        });
-        collector.on('end', async () => {
-            await message.edit({components: []}); // Remove buttons after timeout
         });
     }
 }
