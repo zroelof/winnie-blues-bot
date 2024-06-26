@@ -17,7 +17,7 @@ const cronJobs = [
         desc: 'timed role check'
     },
     {
-        sched: '0 0 * * *', // Every day at midnight
+        sched: '0 */6 * * *', // Every 6 hours
         run: async () => {
             await wom.groups.updateAll(process.env.WOM_GROUP_NUMBER, process.env.WOM_SECURITY_CODE);
             console.log('WOM group data updated successfully.');
