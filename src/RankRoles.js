@@ -23,19 +23,24 @@ async function syncRoles(bot) {
 async function processMemberRoles(member, womMembers, dets, guild) {
     if (member.user.bot) return; // Skip bots
     const guestRole = await ensureRoleExists(guild, 'Guest');
+    const winniesRole = await ensureRoleExists(guild, 'Winnie Blues');
     const rankHierarchy = dets.roleOrders.sort((a, b) => a.index - b.index).map(order => order.role.toLowerCase());
     if (member.roles.cache.some(role => excludedRoles.includes(role.name.toLowerCase()))) {
         if (member.roles.cache.has(guestRole.id)) {
             member.roles.remove(guestRole).catch(error => {
-                console.error(`Failed to remove 'Guest' role from ${member.displayName} in ${guild.name}: ${error}`);
+                console.error(`Failed to remove '@Guest' role from ${member.displayName} in ${guild.name}: ${error}`);
+            });
+        } else if (!member.roles.cache.has(winniesRole.id)) {
+            member.roles.add(winniesRole).catch(error => {
+                console.error(`Failed to give '@Winnie Blues' role to ${member.displayName} in ${guild.name}: ${error}`);
             });
         }
         return;
     }
-    await updateMemberRank(member, womMembers, rankHierarchy, guestRole);
+    await updateMemberRank(member, womMembers, rankHierarchy, guestRole, winniesRole);
 }
 
-async function updateMemberRank(member, womMembers, rankHierarchy, guestRole) {
+async function updateMemberRank(member, womMembers, rankHierarchy, guestRole, winniesRole) {
     const displayNameParts = member.displayName.split(/[|/&]/);
     const highestRank = displayNameParts.reduce((highest, namePart) => {
         const trimmedName = namePart.trim().toLowerCase();
@@ -45,7 +50,11 @@ async function updateMemberRank(member, womMembers, rankHierarchy, guestRole) {
     if (!highestRank) {
         if (!member.roles.cache.has(guestRole.id)) {
             member.roles.add(guestRole).catch(error => {
-                console.error(`Failed to assign 'Guest' role to ${member.displayName} in ${guild.name}: ${error}`);
+                console.error(`Failed to give 'Guest' role to ${member.displayName}: ${error}`);
+            });
+        } else if (member.roles.cache.has(winniesRole.id)) {
+            member.roles.remove(winniesRole).catch(error => {
+                console.error(`Failed to remove 'Winnie Blues' role from ${member.displayName}: ${error}`);
             });
         }
         return;
@@ -53,10 +62,10 @@ async function updateMemberRank(member, womMembers, rankHierarchy, guestRole) {
     if (excludedRoles.includes(standardize(highestRank.rank))) {
         return;
     }
-    await synchronizeMemberRoles(member, highestRank.rank, rankHierarchy, guestRole);
+    await synchronizeMemberRoles(member, highestRank.rank, rankHierarchy, guestRole, winniesRole);
 }
 
-async function synchronizeMemberRoles(member, rank, rankHierarchy, guestRole) {
+async function synchronizeMemberRoles(member, rank, rankHierarchy, guestRole, winniesRole) {
     const rolesToRemove = member.roles.cache.filter(role => rankHierarchy.includes(role.name.toLowerCase()) && role.name.toLowerCase() !== rank.toLowerCase());
     rolesToRemove.forEach(role => {
         member.roles.remove(role).catch(error => {
@@ -66,12 +75,17 @@ async function synchronizeMemberRoles(member, rank, rankHierarchy, guestRole) {
     const rankRole = await ensureRoleExists(member.guild, rank);
     if (!member.roles.cache.has(rankRole.id)) {
         member.roles.add(rankRole).catch(error => {
-            console.error(`Error adding '${rank}' to '${member.displayName}': ${error}`);
+            console.error(`Error giving '${rank}' to '${member.displayName}': ${error}`);
+        });
+    }
+    if (!member.roles.cache.has(winniesRole.id)) {
+        member.roles.add(winniesRole).catch(error => {
+            console.error(`Error giving '@Winnie Blues' to '${member.displayName}': ${error}`);
         });
     }
     if (member.roles.cache.has(guestRole.id)) {
         member.roles.remove(guestRole).catch(error => {
-            console.error(`Error removing 'Guest' role from '${member.displayName}': ${error}`);
+            console.error(`Error removing '@Guest' role from '${member.displayName}': ${error}`);
         });
     }
     if (await getUser(member.id)) {
