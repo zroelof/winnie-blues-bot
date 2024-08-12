@@ -7,22 +7,24 @@ const db = new sqlite3.Database('./waitlist.db', (err) => {
     } else {
         console.log('Database connected.');
         db.run(`CREATE TABLE IF NOT EXISTS waitlist
+        (
+            pos
+            INTEGER
+            NOT
+            NULL,
+            id
+            TEXT
+            NOT
+            NULL
+            UNIQUE,
+            PRIMARY
+            KEY
                 (
-                    pos
-                    INTEGER
-                    PRIMARY
-                    KEY
-                    AUTOINCREMENT,
-                    id
-                    TEXT
-                    NOT
-                    NULL
-                    UNIQUE
-                )`, (err) => {
+            id
+                )
+            )`, (err) => {
             if (err) {
                 console.error('Error creating table', err.message);
-            } else {
-                console.log('Table created/already exists.');
             }
         });
     }
@@ -31,35 +33,23 @@ const db = new sqlite3.Database('./waitlist.db', (err) => {
 // Add a user to the waitlist
 function addUser(userId) {
     return new Promise((resolve, reject) => {
-        // First, check if the user already exists in the waitlist
-        const selectQuery = `SELECT pos
-                             FROM waitlist
-                             WHERE id = ?`;
-        db.get(selectQuery, [userId], (err, row) => {
-            if (err) {
-                reject(`Error checking if you are on the waitlist: ${err.message}`);
-            } else if (row) {
-                // If the user already exists, return their position
-                resolve(`You are already on the waitlist, you are #${row.pos}.`);
-            } else {
-                // If the user does not exist, add them to the waitlist
-                const insertQuery = `INSERT INTO waitlist (id)
-                                     VALUES (?)`;
-                db.run(insertQuery, [userId], function (err) {
-                    if (err) {
-                        reject(`Error joining the waitlist: ${err.message}.`);
-                    } else {
-                        // After adding, fetch the position to confirm
-                        db.get(selectQuery, [userId], (err, newRow) => {
-                            if (err) {
-                                reject(`Error retrieving position: ${err.message}.`);
-                            } else {
-                                resolve(`You have joined the waitlist, you are #${newRow.pos}.`);
-                            }
-                        });
-                    }
-                });
-            }
+        db.serialize(() => {
+            db.get(`SELECT MAX(pos) as maxPos
+                    FROM waitlist`, (err, row) => {
+                if (err) {
+                    reject(`Error finding max position: ${err.message}`);
+                } else {
+                    const position = row.maxPos !== null ? row.maxPos + 1 : 1;
+                    db.run(`INSERT INTO waitlist (pos, id)
+                            VALUES (?, ?)`, [position, userId], (err) => {
+                        if (err) {
+                            reject(`Error adding user to waitlist: ${err.message}`);
+                        } else {
+                            resolve(`You have joined the waitlist, you are #${position}.`);
+                        }
+                    });
+                }
+            });
         });
     });
 }
@@ -67,15 +57,26 @@ function addUser(userId) {
 // Remove a user from the waitlist
 function removeUser(userId) {
     return new Promise((resolve, reject) => {
-        const query = `DELETE
-                       FROM waitlist
-                       WHERE id = ?`;
-        db.run(query, [userId], function (err) {
-            if (err) {
-                reject(err.message);
-            } else {
-                resolve(`User removed from waitlist: <@${userId}>`);
-            }
+        db.serialize(() => {
+            db.run(`DELETE
+                    FROM waitlist
+                    WHERE id = ?`, [userId], function (err) {
+                if (err) {
+                    reject(`Error removing user from waitlist: ${err.message}`);
+                } else if (this.changes > 0) {
+                    db.run(`UPDATE waitlist
+                            SET pos = pos - 1
+                            WHERE pos > (SELECT pos FROM waitlist WHERE id = ?)`, [userId], (err) => {
+                        if (err) {
+                            reject(`Error updating positions: ${err.message}`);
+                        } else {
+                            resolve(`User removed from waitlist: <@${userId}>`);
+                        }
+                    });
+                } else {
+                    resolve(`No user found with ID: ${userId}`);
+                }
+            });
         });
     });
 }
