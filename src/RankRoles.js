@@ -6,12 +6,14 @@ const excludedRsns = ['baford'];
 
 async function syncRoles(bot) {
     console.log("Syncing roles with WOM...");
-    const womMembers = await getWOMMembers();
+    let womMembers = await getWOMMembers();
     const {dets, stats} = await fetchStats();
-    if (!dets || !stats) {
+    if (!dets || !stats || !womMembers) {
         console.error("Failed to fetch details or statistics, cannot proceed with assigning roles.");
         return;
     }
+    // Exclude RSNs
+    womMembers = womMembers.filter(womMember => !excludedRsns.includes(standardize(womMember.rsn)));
     bot.guilds.cache.forEach(guild => {
         guild.members.fetch().then(members => {
             members.forEach(member => {
@@ -40,9 +42,6 @@ async function updateMemberRank(member, womMembers, rankHierarchy, guestRole) {
     const displayNameParts = member.displayName.split(/[|/&]/);
     const highestRank = displayNameParts.reduce((highest, namePart) => {
         const trimmedName = namePart.trim().toLowerCase();
-        if (excludedRsns.includes(trimmedName)) {
-            return highest; // Skip processing for excluded RSNs
-        }
         const memberRank = womMembers.find(womMember => new RegExp('^' + standardize(womMember.rsn) + '$').test(trimmedName));
         return (memberRank && (!highest || compareRanks(memberRank.rank, highest.rank, rankHierarchy) > 0)) ? memberRank : highest;
     }, null);
