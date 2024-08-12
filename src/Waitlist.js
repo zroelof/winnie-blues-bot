@@ -51,7 +51,7 @@ function preparePages(waitlistMembers, maxCharsPerPage) {
     const pages = [];
     let currentPageContent = "";
     waitlistMembers.forEach((member, index) => {
-        const line = `${index + 1}, <@${member.id}>\n`;
+        const line = `${index + 1}: <@${member.id}>\n`;
         if ((currentPageContent.length + line.length) > maxCharsPerPage) {
             pages.push(currentPageContent);
             currentPageContent = line;

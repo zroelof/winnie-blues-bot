@@ -1,5 +1,6 @@
 const {fetchStats, getWOMMembers} = require('./WiseOldMan');
 const {capitalizeWords, standardize} = require("./Util");
+const {removeUser, getUser} = require("./WaitlistSQL");
 const excludedRoles = ['owner', 'deputy owner', 'saviour', 'server bots'];
 
 async function syncRoles(bot) {
@@ -72,6 +73,9 @@ async function synchronizeMemberRoles(member, rank, rankHierarchy, guestRole) {
         member.roles.remove(guestRole).catch(error => {
             console.error(`Error removing 'Guest' role from '${member.displayName}': ${error}`);
         });
+    }
+    if (await getUser(member.id)) {
+        await removeUser(member.id);
     }
 }
 
