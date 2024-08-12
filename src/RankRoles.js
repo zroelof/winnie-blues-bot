@@ -2,7 +2,6 @@ const {fetchStats, getWOMMembers} = require('./WiseOldMan');
 const {capitalizeWords, standardize} = require("./Util");
 const {removeUser, getUser} = require("./WaitlistSQL");
 const excludedRoles = ['owner', 'deputy owner', 'saviour', 'server bots'];
-const excludedRsns = ['baford'];
 
 async function syncRoles(bot) {
     console.log("Syncing roles with WOM...");
@@ -12,8 +11,6 @@ async function syncRoles(bot) {
         console.error("Failed to fetch details or statistics, cannot proceed with assigning roles.");
         return;
     }
-    // Exclude RSNs
-    womMembers = womMembers.filter(womMember => !excludedRsns.includes(standardize(womMember.rsn)));
     bot.guilds.cache.forEach(guild => {
         guild.members.fetch().then(members => {
             members.forEach(member => {

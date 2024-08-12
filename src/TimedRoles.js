@@ -4,6 +4,7 @@ const {bot} = require("./Bot");
 const {ChannelType, ButtonStyle} = require("discord-api-types/v10");
 const {findOrCreateMessage} = require("./Util");
 const CHANNEL_NAME = 'time-based-ranks';
+const excludedRsns = ['baford'];
 
 async function updateMessage() {
     const guilds = bot.guilds.cache.values();
@@ -54,6 +55,9 @@ function preparePages(outdatedMembers, emojis, maxCharsPerPage) {
     const pages = [];
     let currentPageContent = "";
     outdatedMembers.forEach(member => {
+        if (excludedRsns.includes(member.displayName)) {
+            return;
+        }
         const currentRankEmoji = getRankEmoji(emojis, member.currentRole);
         const requiredRankEmoji = getRankEmoji(emojis, member.requiredRole);
         const line = `[**${member.displayName}**](https://wiseoldman.net/players/${encodeURIComponent(member.displayName)}) | ${currentRankEmoji} -> ${requiredRankEmoji} (${member.daysSinceJoined}d).\n`;
