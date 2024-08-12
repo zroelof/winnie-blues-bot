@@ -2,6 +2,7 @@ const {fetchStats, getWOMMembers} = require('./WiseOldMan');
 const {capitalizeWords, standardize} = require("./Util");
 const {removeUser, getUser} = require("./WaitlistSQL");
 const excludedRoles = ['owner', 'deputy owner', 'saviour', 'server bots'];
+const excludedRsns = ['baford'];
 
 async function syncRoles(bot) {
     console.log("Syncing roles with WOM...");
@@ -39,6 +40,9 @@ async function updateMemberRank(member, womMembers, rankHierarchy, guestRole) {
     const displayNameParts = member.displayName.split(/[|/&]/);
     const highestRank = displayNameParts.reduce((highest, namePart) => {
         const trimmedName = namePart.trim().toLowerCase();
+        if (excludedRsns.includes(trimmedName)) {
+            return highest; // Skip processing for excluded RSNs
+        }
         const memberRank = womMembers.find(womMember => new RegExp('^' + standardize(womMember.rsn) + '$').test(trimmedName));
         return (memberRank && (!highest || compareRanks(memberRank.rank, highest.rank, rankHierarchy) > 0)) ? memberRank : highest;
     }, null);
