@@ -1,7 +1,8 @@
 const {ActionRowBuilder, ButtonBuilder} = require('discord.js');
-const {wom} = require("./wom");
-const {bot} = require("./bot");
+const {wom} = require("./WiseOldMan");
+const {bot} = require("./Bot");
 const {ChannelType, ButtonStyle} = require("discord-api-types/v10");
+const {findOrCreateMessage} = require("./Util");
 const CHANNEL_NAME = 'time-based-ranks';
 
 async function updateMessage() {
@@ -31,9 +32,9 @@ async function updateMessage() {
         collector.on('collect', async interaction => {
             if (!interaction.isButton()) return;
             try {
-                if (interaction.customId === 'previous') {
+                if (interaction.customId === 'timerole-previous') {
                     currentPage = Math.max(currentPage - 1, 0);
-                } else if (interaction.customId === 'next') {
+                } else if (interaction.customId === 'timerole-next') {
                     currentPage = Math.min(currentPage + 1, pages.length - 1);
                 }
                 await interaction.update({
@@ -82,37 +83,20 @@ function getRankEmoji(emojis, rankName) {
     return emoji ? `<:${emoji.name}:${emoji.id}>` : `**${rankName}**`;
 }
 
-async function findOrCreateMessage(channel) {
-    const messages = await channel.messages.fetch({limit: 10});
-    const botMessages = messages.filter(msg => msg.author.id === bot.user.id);
-    if (botMessages.size > 0) {
-        const sortedBotMessages = botMessages.sort((a, b) => b.createdTimestamp - a.createdTimestamp);
-        const mostRecentMessage = sortedBotMessages.first();
-        // Delete other bot messages
-        for (const message of sortedBotMessages.values()) {
-            if (message.id !== mostRecentMessage.id) {
-                await message.delete();
-            }
-        }
-        return mostRecentMessage;
-    }
-    return await channel.send('Initializing rank updates...');
-}
-
 function prepareComponents(hasMultiplePages, currentPage = 0, totalPages = 1) {
     const components = [];
     if (hasMultiplePages) {
         const buttons = [];
         if (currentPage > 0) {
             buttons.push(new ButtonBuilder()
-                .setCustomId('previous')
+                .setCustomId('timerole-previous')
                 .setLabel('Previous')
                 .setStyle(ButtonStyle.Primary)
             );
         }
         if (currentPage < totalPages - 1) {
             buttons.push(new ButtonBuilder()
-                .setCustomId('next')
+                .setCustomId('timerole-next')
                 .setLabel('Next')
                 .setStyle(ButtonStyle.Primary)
             );

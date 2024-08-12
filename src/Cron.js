@@ -1,9 +1,10 @@
 const cron = require('node-cron');
-const {wom} = require("./wom");
-const {bot} = require("./bot");
-const {updateStatus} = require("./status");
-const {syncRoles} = require("./roles");
-const {updateMessage} = require("./timedroles");
+const {wom} = require("./WiseOldMan");
+const {bot} = require("./Bot");
+const {updateStatus} = require("./Status");
+const {syncRoles} = require("./RankRoles");
+const {updateMessage} = require("./TimedRoles");
+const {updateWaitlist} = require("./Waitlist");
 
 const cronJobs = [
     {
@@ -15,6 +16,11 @@ const cronJobs = [
         sched: '*/1 * * * *', // Every 1 minute
         run: () => updateMessage(),
         desc: 'timed role check'
+    },
+    {
+        sched: '*/1 * * * *', // Every 1 minute
+        run: () => updateWaitlist(),
+        desc: 'waitlist sync'
     },
     {
         sched: '0 */6 * * *', // Every 6 hours

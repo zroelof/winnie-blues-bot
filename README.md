@@ -1,17 +1,18 @@
 # Table of Contents
+
 - [Winnie Blues Discord Bot](#winnie-blues-discord-bot)
-  - [Pre-setup](#pre-setup)
-  - [Installation Instructions](#installation-instructions)
-    - [Setting Up the Environment](#setting-up-the-environment)
-    - [Configuring The Bot](#configuring-the-bot)
-    - [Running the Bot](#running-the-bot)
-    - [Bot Permissions](#bot-permissions)
-  - [Features](#features)
-    - [Auto-Tracking](#auto-tracking)
-    - [Reactions](#reactions)
-    - [Role Management](#role-management)
-    - [Commands](#commands)
-    - [Status Updates](#status-updates)
+    - [Pre-setup](#pre-setup)
+    - [Installation Instructions](#installation-instructions)
+        - [Setting Up the Environment](#setting-up-the-environment)
+        - [Configuring The Bot](#configuring-the-bot)
+        - [Running the Bot](#running-the-bot)
+        - [Bot Permissions](#bot-permissions)
+    - [Features](#features)
+        - [Auto-Tracking](#auto-tracking)
+        - [Reactions](#reactions)
+        - [Role Management](#role-management)
+        - [Commands](#commands)
+        - [Status Updates](#status-updates)
 
 ## Pre-setup
 
@@ -68,17 +69,21 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 ### Auto-Tracking
 
 - **Automatically refreshes** WOM group data nightly at midnight (AEST).
-  
+
 ### Automated Rank-Roles
 
-- Every `5th minute` (e.g. xx:00, xx:05, xx:10, xx:15, ...) the bot utilizes the WiseOldMan API to fetch a map of all in-game member rsns and their rank.
+- Every `5th minute` (e.g. xx:00, xx:05, xx:10, xx:15, ...) the bot utilizes the WiseOldMan API to fetch a map of all
+  in-game member rsns and their rank.
 - The bot then looks up all members in all of its Discord servers, and checks if their nickname matches an in-game rsn.
 - Multiple RSNs are supported in member nicknames, use: `|`, `&` or `/` to delimit each RSN.
-    - e.g. If a member has the nickname `"Roelof | Foleor / Loroef"`, we split, trim and collect each RSN.<br>Which results in: `"Roelof", "Foleor", "Loroef"`.
+    - e.g. If a member has the nickname `"Roelof | Foleor / Loroef"`, we split, trim and collect each RSN.<br>Which
+      results in: `"Roelof", "Foleor", "Loroef"`.
 - Members whose nickname matches one of the in-game rsns are assigned their rank-roles automatically.
     - The bot will automatically create rank-roles as required, if they do not exist in the server.
-    - For members with multiple names, all names are looked up and the highest applicable rank-role is given to the user.
-    - There are explicit restrictions preventing `@Saviour`, `@Deputy Owner`, or `@Owner` from automatically being assigned.
+    - For members with multiple names, all names are looked up and the highest applicable rank-role is given to the
+      user.
+    - There are explicit restrictions preventing `@Saviour`, `@Deputy Owner`, or `@Owner` from automatically being
+      assigned.
     - Members whose nickname doesn't match an in-game rsn are given the `@Guest` rank-role.
 
 ### Commands

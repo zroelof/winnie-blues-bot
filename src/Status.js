@@ -1,7 +1,7 @@
 const {ActivityType} = require("discord-api-types/v10");
-const {fetchStats} = require("./wom");
-const {capitalizeWords} = require("./util");
-const {bot} = require("./bot");
+const {fetchStats} = require("./WiseOldMan");
+const {capitalizeWords} = require("./Util");
+const {bot} = require("./Bot");
 
 let messageQueue = [];
 let timer;

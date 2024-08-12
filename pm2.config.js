@@ -1,7 +1,7 @@
 module.exports = {
     apps: [{
         name: "Winnies",
-        script: "run.js",
+        script: "Run.js",
         instances: 1,
         exec_mode: "fork",
         watch: true,

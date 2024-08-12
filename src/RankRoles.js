@@ -1,5 +1,5 @@
-const {fetchStats, getWOMMembers} = require('./wom');
-const {capitalizeWords, standardize} = require("./util");
+const {fetchStats, getWOMMembers} = require('./WiseOldMan');
+const {capitalizeWords, standardize} = require("./Util");
 const excludedRoles = ['owner', 'deputy owner', 'saviour', 'server bots'];
 
 async function syncRoles(bot) {
