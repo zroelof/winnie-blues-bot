@@ -31,11 +31,11 @@ bot.on('interactionCreate', async interaction => {
             await interaction.editReply(`Your nickname has been set to \`\`${rsn}\`\``);
         } else if (commandName === 'waitlist') {
             const id = interaction.member.user.id;
-            const message = addUser(id);
+            const message = await addUser(id);
             await interaction.editReply(`${message}`);
         } else if (commandName === 'waitlist-leave') {
             const id = interaction.member.user.id;
-            const message = removeUser(id);
+            const message = await removeUser(id);
             await interaction.editReply(`${message}`);
         } else if (commandName === 'waitlist-remove') {
             const user = options.getUser('user');
