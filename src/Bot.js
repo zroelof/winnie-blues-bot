@@ -38,6 +38,10 @@ bot.on('interactionCreate', async interaction => {
             const message = await removeUser(id);
             await interaction.editReply(`${message}`);
         } else if (commandName === 'waitlist-remove') {
+            if (!interaction.memberPermissions.has("Administrator")) {
+                await interaction.editReply("You do not have permission to use this command.");
+                return;
+            }
             const user = options.getUser('user');
             const userId = user ? user.id : options.getString('id');
             if (!userId) {
