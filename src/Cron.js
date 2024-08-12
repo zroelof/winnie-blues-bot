@@ -8,17 +8,17 @@ const {updateWaitlist} = require("./Waitlist");
 
 const cronJobs = [
     {
-        sched: '*/1 * * * *', // Every 1 minute
+        sched: '*/1 * * * *', // Every minute
         run: () => syncRoles(bot),
         desc: 'role synchronization'
     },
     {
-        sched: '*/1 * * * *', // Every 1 minute
+        sched: '*/2 * * * *', // Every 2 minutes
         run: () => updateMessage(),
         desc: 'timed role check'
     },
     {
-        sched: '*/1 * * * *', // Every 1 minute
+        sched: '*/2 * * * *', // Every 2 minutes
         run: () => updateWaitlist(),
         desc: 'waitlist sync'
     },
