@@ -13,12 +13,12 @@ const cronJobs = [
         desc: 'role synchronization'
     },
     {
-        sched: '15 * * * * *', // At 15 seconds past every minute
+        sched: '*/1 * * * *', // Every minute
         run: () => updateMessage(),
         desc: 'timed role check'
     },
     {
-        sched: '15 * * * * *', // At 15 seconds past every minute
+        sched: '*/1 * * * *', // Every minute
         run: () => updateWaitlist(),
         desc: 'waitlist sync'
     },
