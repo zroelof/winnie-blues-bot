@@ -41,11 +41,13 @@ async function processMemberRoles(member, womMembers, dets, guild) {
 }
 
 async function updateMemberRank(member, womMembers, rankHierarchy, guestRole, winniesRole) {
-    const displayNameParts = member.displayName.split(/[|/&]/);
-    const highestRank = displayNameParts.reduce((highest, namePart) => {
-        const trimmedName = namePart.trim().toLowerCase();
-        const memberRank = womMembers.find(womMember => new RegExp('^' + standardize(womMember.rsn) + '$').test(trimmedName));
-        return (memberRank && (!highest || compareRanks(memberRank.rank, highest.rank, rankHierarchy) > 0)) ? memberRank : highest;
+    const displayNames = member.displayName.split(/[|/&]/).map(part => standardize(part.trim()));
+    const highestRank = womMembers.reduce((highest, womMember) => {
+        const match = displayNames.includes(standardize(womMember.rsn));
+        if (match && (!highest || compareRanks(womMember.rank, highest.rank, rankHierarchy) > 0)) {
+            return womMember;
+        }
+        return highest;
     }, null);
     if (!highestRank) {
         if (!member.roles.cache.has(guestRole.id)) {
@@ -64,6 +66,7 @@ async function updateMemberRank(member, womMembers, rankHierarchy, guestRole, wi
     }
     await synchronizeMemberRoles(member, highestRank.rank, rankHierarchy, guestRole, winniesRole);
 }
+
 
 async function synchronizeMemberRoles(member, rank, rankHierarchy, guestRole, winniesRole) {
     const rolesToRemove = member.roles.cache.filter(role => rankHierarchy.includes(role.name.toLowerCase()) && role.name.toLowerCase() !== rank.toLowerCase());

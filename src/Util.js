@@ -9,7 +9,7 @@ function standardize(str) {
     // First escape regex special characters
     const escapedStr = str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     // Then replace all non-alphanumeric characters with regex '.*'
-    return escapedStr.replace(/[^a-z0-9\\]/gi, '.*').toLowerCase();
+    return escapedStr.replace(/[^a-z0-9\\]/gi, '.*').toLowerCase().trim();
 }
 
 async function findOrCreateMessage(channel) {
