@@ -24,6 +24,10 @@ async function processMemberRoles(member, womMembers, dets, guild) {
     if (member.user.bot) return; // Skip bots
     const guestRole = await ensureRoleExists(guild, 'Guest');
     const winniesRole = await ensureRoleExists(guild, 'Winnie Blues');
+    if (!guestRole || !winniesRole) {
+        console.error("Failed finding guest or winnie blues role.")
+        return;
+    }
     const rankHierarchy = dets.roleOrders.sort((a, b) => a.index - b.index).map(order => order.role.toLowerCase());
     if (member.roles.cache.some(role => excludedRoles.includes(role.name.toLowerCase()))) {
         if (member.roles.cache.has(guestRole.id)) {
@@ -76,6 +80,10 @@ async function synchronizeMemberRoles(member, rank, rankHierarchy, guestRole, wi
         });
     });
     const rankRole = await ensureRoleExists(member.guild, rank);
+    if (!rankRole) {
+        console.error("Failed finding/creating rank role:", rank);
+        return;
+    }
     if (!member.roles.cache.has(rankRole.id)) {
         member.roles.add(rankRole).catch(error => {
             console.error(`Error giving '${rank}' to '${member.displayName}': ${error}`);
@@ -101,14 +109,24 @@ function compareRanks(rank1, rank2, rankHierarchy) {
 }
 
 async function ensureRoleExists(guild, roleName) {
-    let role = guild.roles.cache.find(r => standardize(r.name) === standardize(roleName));
+    const roles = await guild.roles.fetch().catch(error => {
+        console.error(`Failed to fetch roles:`, error);
+        return null;
+    });
+    if (!roles) return null;
+    let role = roles.find(r => standardize(r.name) === standardize(roleName));
     if (!role) {
-        role = await guild.roles.create({
-            name: capitalizeWords(roleName), hoist: true, mentionable: false,
-            reason: 'Needed for auto role assignment via WOM.'
-        }).catch(error => {
+        try {
+            role = await guild.roles.create({
+                name: capitalizeWords(roleName),
+                hoist: true,
+                mentionable: false,
+                reason: 'Needed for auto role assignment via WOM.'
+            });
+        } catch (error) {
             console.error(`Failed to create role '${roleName}':`, error);
-        });
+            return null;
+        }
     }
     return role;
 }
