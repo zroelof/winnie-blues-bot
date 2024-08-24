@@ -1,20 +1,24 @@
 {
-  "name": "winnie-blue-bot",
-  "version": "1.0.0",
-  "description": "Automatic discord role management via WiseOldMan.",
-  "main": "Run.js",
-  "scripts": {
-    "start": "node Run.js"
-  },
-  "keywords": [],
-  "author": "Roelof",
-  "license": "UNLICENSED",
-  "dependencies": {
-    "@wise-old-man/utils": "^3.3.1",
-    "discord-api-types": "^0.37.75",
-    "discord.js": "^14.14.1",
-    "dotenv": "^16.4.5",
-    "node-cron": "^3.0.3",
-    "sqlite3": "^5.1.7"
-  }
+	"name": "winnie-blue-bot",
+	"version": "1.0.0",
+	"description": "Automatic discord role management via WiseOldMan.",
+	"main": "Run.js",
+	"scripts": {
+		"start": "node Run.js",
+		"prettier": "prettier --write \"**/*.{js,ts,json,css,scss,md,html}\""
+	},
+	"keywords": [],
+	"author": "Roelof",
+	"license": "UNLICENSED",
+	"dependencies": {
+		"@wise-old-man/utils": "^3.3.1",
+		"discord-api-types": "^0.37.97",
+		"discord.js": "^14.15.3",
+		"dotenv": "^16.4.5",
+		"node-cron": "^3.0.3",
+		"sqlite3": "^5.1.7"
+	},
+	"devDependencies": {
+		"prettier": "^3.3.3"
+	}
 }
