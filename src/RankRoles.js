@@ -54,6 +54,7 @@ async function syncGuildRoles(guild, womMemberMap, rankHierarchy, botId) {
     const members = await guild.members.fetch();
     const updates = [];
     for (const member of members.values()) {
+        if (member.user.bot) continue;
         const update = processMemberRoles(
             member,
             womMemberMap,
