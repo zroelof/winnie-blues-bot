@@ -10,7 +10,7 @@ BASE_DIRECTORY_PATH="/opt/winnies"
 download_files() {
     local path="$1"
     local target_directory="$2"
-    API_RESPONSE=$(curl -s "https://api.github.com/repos/R0310F/winnie-blues-bot/contents/$path?$(date +%s)")
+    API_RESPONSE=$(curl -s "https://api.github.com/repos/zroelof/winnie-blues-bot/contents/$path?$(date +%s)")
     if echo "$API_RESPONSE" | grep -q "message"; then
         echo "Error fetching the files from GitHub for path $path:"
         echo "$API_RESPONSE" | jq -r .message
