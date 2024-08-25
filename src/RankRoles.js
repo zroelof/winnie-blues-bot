@@ -92,7 +92,7 @@ function processMemberRoles(
         return handleExcludedMember(member.id, guestRole, winniesRole, memberRoles);
     }
     let displayNames = [member.nickname || '', member.user.username || '']
-        .flatMap(name => name.split(/[\/|>\\]+/))
+        .flatMap(name => name.split(/\s[-/|\\]\s/).filter(part => part.trim() !== ''))
         .map(name => name.trim())
         .filter(name => name);
     const memberRanks = [];
