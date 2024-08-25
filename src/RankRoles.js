@@ -23,7 +23,7 @@ async function syncRoles(bot) {
         .sort((a, b) => a.index - b.index)
         .map(order => order.role.toLowerCase().replace('_', ' '));
     const womMemberMap = new Map(
-        womMembers.map(member => [standardize(member.rsn), member.rank.toLowerCase().replace('_', ' ')]),
+        womMembers.map(member => [member.rsn, member.rank.toLowerCase().replace('_', ' ')]),
     );
     for (const guild of bot.guilds.cache.values()) {
         await syncGuildRoles(guild, womMemberMap, rankHierarchy, bot.user.id);
@@ -37,7 +37,7 @@ async function syncGuildRoles(guild, womMemberMap, rankHierarchy, botId) {
     const winniesRole = roles.find(r => r.name.toLowerCase() === 'winnie blues');
     const rankRoles = new Map(
         rankHierarchy
-            .map(rank => [rank, roles.find(r => standardize(r.name) === rank)])
+            .map(rank => [rank, roles.find(r => r.name.toLowerCase() === rank.toLowerCase())])
             .filter(([_, role]) => role !== undefined),
     );
     if (!guestRole || !winniesRole) {
