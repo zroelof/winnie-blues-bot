@@ -45,9 +45,9 @@ async function syncGuildRoles(guild, womMemberMap, rankHierarchy, botId) {
         return;
     }
     if (rankRoles.size !== rankHierarchy.length) {
-        console.warn(`Some rank roles are missing in guild: ${guild.name}`);
-        console.warn(`Found roles: ${[...rankRoles.keys()].join(', ')}`);
-        console.warn(`Expected roles: ${rankHierarchy.join(', ')}`);
+        console.log(`Some rank roles are missing in guild: ${guild.name}`);
+        console.log(`Found roles: ${[...rankRoles.keys()].join(', ')}`);
+        console.log(`Expected roles: ${rankHierarchy.join(', ')}`);
     }
     const botMember = await guild.members.fetch(botId);
     const botRole = botMember.roles.highest;
