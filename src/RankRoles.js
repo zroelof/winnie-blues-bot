@@ -21,9 +21,9 @@ async function syncRoles(bot) {
     }
     const rankHierarchy = dets.roleOrders
         .sort((a, b) => a.index - b.index)
-        .map(order => order.role.toLowerCase());
+        .map(order => order.role.toLowerCase().replace('_', ' '));
     const womMemberMap = new Map(
-        womMembers.map(member => [standardize(member.rsn), member.rank.toLowerCase()]),
+        womMembers.map(member => [standardize(member.rsn), member.rank.toLowerCase().replace('_', ' ')]),
     );
     for (const guild of bot.guilds.cache.values()) {
         await syncGuildRoles(guild, womMemberMap, rankHierarchy, bot.user.id);
