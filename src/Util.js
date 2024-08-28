@@ -8,13 +8,7 @@ const capitalizeWords = metricName => {
 };
 
 function standardize(str) {
-	// First escape regex special characters
-	const escapedStr = str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	// Then replace all non-alphanumeric characters with regex '.*'
-	return escapedStr
-		.replace(/[^a-z0-9\\]/gi, '.*')
-		.toLowerCase()
-		.trim();
+	return str.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
 async function findOrCreateMessage(channel) {

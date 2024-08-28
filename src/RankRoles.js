@@ -100,7 +100,8 @@ function processMemberRoles(
     for (const name of displayNames) {
         const standardizedName = standardize(name);
         for (const [womName, rank] of womMemberMap) {
-            if (new RegExp(`^${standardizedName}$`, 'i').test(womName)) {
+            const standardizedWomName = standardize(womName);
+            if (standardizedName === standardizedWomName) {
                 memberRanks.push(rank);
                 break;
             }
