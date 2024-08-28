@@ -92,7 +92,7 @@ function processMemberRoles(
     if ([...memberRoles].some(roleId => EXCLUDED_ROLES.has(roleId))) {
         return handleExcludedMember(member.id, guestRole, winniesRole, memberRoles);
     }
-    let displayNames = [member.nickname || '', member.user.username || '']
+    let displayNames = [member.nickname || '', member.user.globalName || '', member.user.username || '']
         .flatMap(name => name.split(/\s-\s|[\/|\\]/).filter(part => part.trim() !== ''))
         .map(name => name.trim())
         .filter(name => name);
