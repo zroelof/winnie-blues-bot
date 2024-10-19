@@ -24,7 +24,7 @@ async function syncRoles(bot) {
 		const startTime = Date.now();
 		// Fetch stats and members concurrently
 		const [statsResult, womMembersArray] = await Promise.all([fetchStats(), getWOMMembers()]);
-		console.log('Fetched stats and WOM members.');
+		//console.log('Fetched stats and WOM members.');
 		const { dets } = statsResult;
 		if (!dets || !womMembersArray) {
 			console.error('Failed to fetch details or members. Aborting role synchronization.');
@@ -37,7 +37,7 @@ async function syncRoles(bot) {
 		const rankHierarchy = dets.roleOrders
 			.sort((a, b) => a.index - b.index)
 			.map(order => order.role.toLowerCase().replace('_', ' '));
-		console.log('Rank hierarchy:', rankHierarchy);
+		//console.log('Rank hierarchy:', rankHierarchy);
 		// Iterate through each guild the bot is part of
 		for (const guild of bot.guilds.cache.values()) {
 			console.log(`Synchronizing roles for guild: ${guild.name}`);
@@ -49,7 +49,7 @@ async function syncRoles(bot) {
 		console.error('An unexpected error occurred during role synchronization:', error);
 	} finally {
 		isSyncingRoles = false;
-		console.log('syncRoles has completed and flag has been reset.');
+		//console.log('syncRoles has completed and flag has been reset.');
 	}
 }
 
