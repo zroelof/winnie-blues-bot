@@ -1,50 +1,60 @@
+// WiseOldMan.js
 const { WOMClient } = require('@wise-old-man/utils');
+const NodeCache = require('node-cache');
 
 const wom = new WOMClient({
 	apiKey: process.env.WOM_API_KEY,
 	userAgent: '@roelof',
 });
 
-let dets = null;
-let stats = null;
-let lastFetchTime = 0;
-let fetchPromise = null;
+// Initialize cache with a TTL of 1 hour
+const cache = new NodeCache({ stdTTL: 60 * 60 });
 
-async function fetchStats(forceRefresh = false) {
-	const currentTime = Date.now();
-	const sixHours = 6 * 60 * 60 * 1000; // 6 hours
-	// Check if a fetch is necessary based on timing and data validity
-	if (!forceRefresh && dets && stats && currentTime - lastFetchTime <= sixHours) {
-		return { dets, stats };
+async function fetchStats() {
+	const cacheKey = 'fetchStats';
+	const cachedData = cache.get(cacheKey);
+	if (cachedData) {
+		console.log('Returning cached stats.');
+		return cachedData;
 	}
-	// If a fetch is already ongoing, return the existing promise
-	if (fetchPromise) {
-		return fetchPromise;
-	}
-	// Otherwise, start a new fetch process
-	fetchPromise = (async () => {
-		try {
-			dets = await wom.groups.getGroupDetails(process.env.WOM_GROUP_NUMBER);
-			stats = await wom.groups.getGroupStatistics(process.env.WOM_GROUP_NUMBER);
-			lastFetchTime = currentTime;
-			console.log('Stats have been updated.');
-			return { dets, stats };
-		} catch (error) {
-			console.error('Failed to fetch stats:', error);
-			throw error;
-		} finally {
-			fetchPromise = null;
+	try {
+		const [dets, stats] = await Promise.all([
+			wom.groups.getGroupDetails(process.env.WOM_GROUP_NUMBER),
+			wom.groups.getGroupStatistics(process.env.WOM_GROUP_NUMBER),
+		]);
+		const data = { dets, stats };
+		cache.set(cacheKey, data);
+		console.log('Fetched and cached fresh stats.');
+		return data;
+	} catch (error) {
+		console.error('Error fetching stats:', error);
+		if (cachedData) {
+			console.log('Returning stale cached stats due to error.');
+			return cachedData;
 		}
-	})();
-	return fetchPromise;
+		throw error;
+	}
 }
 
 async function getWOMMembers() {
+	const cacheKey = 'getWOMMembers';
+	const cachedData = cache.get(cacheKey);
+	if (cachedData) {
+		console.log('Returning cached WOM members.');
+		return cachedData;
+	}
 	try {
-		let csv = await wom.groups.getMembersCSV(process.env.WOM_GROUP_NUMBER);
-		return parseCSV(csv);
+		const csv = await wom.groups.getMembersCSV(process.env.WOM_GROUP_NUMBER);
+		const members = parseCSV(csv);
+		cache.set(cacheKey, members);
+		console.log('Fetched and cached fresh WOM members.');
+		return members;
 	} catch (error) {
-		console.error('Error fetching CSV:', error);
+		console.error('Error fetching WOM members:', error);
+		if (cachedData) {
+			console.log('Returning stale cached WOM members due to error.');
+			return cachedData;
+		}
 		return [];
 	}
 }
@@ -55,7 +65,7 @@ function parseCSV(csvData) {
 		const columns = row.split(',');
 		return {
 			rsn: columns[0].trim().toLowerCase(),
-			rank: columns[1].trim().toLowerCase(),
+			rank: columns[1].trim().replace('_', ' ').toLowerCase(),
 		};
 	});
 }
