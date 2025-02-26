@@ -57,10 +57,13 @@ if [ -f "$CONFIG_FILE" ]; then
     cp "$CONFIG_FILE" /tmp/winnie-backup/index.js
 fi
 
-# Clear existing directory while preserving config directory structure
+# Clear existing directory while preserving config directory and node_modules
 if [ -d "$BASE_DIRECTORY_PATH" ]; then
-    echo "Removing existing directory: $BASE_DIRECTORY_PATH (preserving config)"
-    find "$BASE_DIRECTORY_PATH" -mindepth 1 -not -path "$BASE_DIRECTORY_PATH/src/config*" -delete
+    echo "Removing existing directory: $BASE_DIRECTORY_PATH (preserving config and node_modules)"
+    find "$BASE_DIRECTORY_PATH" -mindepth 1 \
+        -not -path "$BASE_DIRECTORY_PATH/src/config*" \
+        -not -path "$BASE_DIRECTORY_PATH/node_modules*" \
+        -delete
 fi
 
 # Create base directory
