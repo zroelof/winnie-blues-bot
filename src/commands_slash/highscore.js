@@ -277,7 +277,7 @@ function prepareClogEmbeds(clogEntries, groupDetails, client, guild) {
 		return [];
 	}
 	// Create fields for collection log entries
-	const fields = createClogFields(clogEntries);
+	const fields = createClogFields(clogEntries, client, guild);
 	// Split fields into chunks to keep within Discord's limits
 	const fieldChunks = chunkFields(fields, config.fieldsPerRow);
 	// Create embeds for each chunk
