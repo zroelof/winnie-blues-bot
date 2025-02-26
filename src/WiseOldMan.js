@@ -1,5 +1,5 @@
 // WiseOldMan.js
-const { WOMClient } = require('@wise-old-man/utils');
+const { WOMClient, Metric } = require('@wise-old-man/utils');
 const NodeCache = require('node-cache');
 const { WOM_API_KEY, WOM_USER_AGENT, WOM_GROUP_NUMBER } = require('./config');
 
@@ -37,6 +37,18 @@ async function fetchStats() {
 	}
 }
 
+async function getClogHighscores() {
+	try {
+		return await wom.groups.getGroupHiscores(WOM_GROUP_NUMBER, Metric.COLLECTIONS_LOGGED, {
+			limit: 21,
+			offset: 0,
+		});
+	} catch (e) {
+		console.error('Failed to retrieve top 21 cloggers:', e);
+		return [];
+	}
+}
+
 async function getWOMMembers() {
 	try {
 		const csv = await wom.groups.getMembersCSV(WOM_GROUP_NUMBER);
@@ -60,4 +72,4 @@ function parseCSV(csvData) {
 	});
 }
 
-module.exports = { wom, fetchStats, getWOMMembers };
+module.exports = { wom, fetchStats, getWOMMembers, getClogHighscores };

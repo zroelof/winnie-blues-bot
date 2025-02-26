@@ -11,7 +11,7 @@
 	"author": "Roelof",
 	"license": "UNLICENSED",
 	"dependencies": {
-		"@wise-old-man/utils": "^3.3.1",
+		"@wise-old-man/utils": "^3.3.8",
 		"discord-api-types": "^0.37.97",
 		"discord.js": "^14.15.3",
 		"dotenv": "^16.4.5",

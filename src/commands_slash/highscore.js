@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField } = require('discord.js');
-const { fetchStats } = require('../WiseOldMan');
+const { fetchStats, getClogHighscores } = require('../WiseOldMan');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,6 +17,7 @@ module.exports = {
 						name: 'Minigames',
 						value: 'minigames',
 					},
+					{ name: 'Collection Log', value: 'clog' },
 				),
 		),
 	execute: executeHighscoreCommand,
@@ -27,6 +28,7 @@ const config = {
 	skillsColor: 0x00aa00, // Green
 	bossesColor: 0xaa0000, // Red
 	minigamesColor: 0x0000aa, // Blue
+	clogColor: 0xaa00aa, // Purple
 
 	// Discord embed settings
 	fieldsPerRow: 3, // Always use 3 columns
@@ -55,18 +57,23 @@ function formatNumber(num) {
 
 // Find an emoji from the client or guild cache
 function findEmoji(client, guild, emojiName) {
-	// Try to find in client's emoji cache (global bot emojis)
-	let emoji = client.emojis.cache.find(
-		emoji => emoji.name.toLowerCase() === emojiName.toLowerCase(),
-	);
-	// If not found in client's emojis, check guild's emojis
-	if (!emoji && guild) {
-		emoji = guild.emojis.cache.find(
+	try {
+		// Try to find in client's emoji cache (global bot emojis)
+		let emoji = client.emojis.cache.find(
 			emoji => emoji.name.toLowerCase() === emojiName.toLowerCase(),
 		);
+		// If not found in client's emojis, check guild's emojis
+		if (!emoji && guild) {
+			emoji = guild.emojis.cache.find(
+				emoji => emoji.name.toLowerCase() === emojiName.toLowerCase(),
+			);
+		}
+		// Return the emoji in the format Discord expects, or null if not found
+		return emoji ? `<:${emoji.name}:${emoji.id}>` : null;
+	} catch (e) {
+		console.error('Failed finding emoji:', emojiName.toLowerCase());
+		return null;
 	}
-	// Return the emoji in the format Discord expects, or null if not found
-	return emoji ? `<:${emoji.name}:${emoji.id}>` : null;
 }
 
 // Process metrics (skills, bosses, activities) from statistics data
@@ -148,6 +155,24 @@ function createFields(highscores, metricType, client, guild) {
 		const value = lines.join('\n');
 		return {
 			name: displayName,
+			value: value,
+			inline: true,
+		};
+	});
+}
+
+// Create fields for collection log entries
+function createClogFields(clogEntries, client, guild) {
+	return clogEntries.map((entry, index) => {
+		console.log('ClogEntry:', JSON.stringify(entry));
+		const accountEmojiStr = findEmoji(client, guild, entry.player.type);
+		const value = [
+			`**${entry.player.displayName}** ${accountEmojiStr ? accountEmojiStr : ''}`,
+			`Logs: ${formatNumber(entry.data.score)}`,
+			`Rank: ${formatNumber(entry.data.rank)}`,
+		].join('\n');
+		return {
+			name: `#${index + 1}`,
 			value: value,
 			inline: true,
 		};
@@ -243,6 +268,48 @@ function prepareDiscordEmbeds(highscores, groupDetails, metricType, client, guil
 	});
 }
 
+// Format collection log embeds
+function prepareClogEmbeds(clogEntries, groupDetails, client, guild) {
+	if (!clogEntries || clogEntries.length === 0) {
+		return [];
+	}
+
+	// Create fields for collection log entries
+	const fields = createClogFields(clogEntries);
+	// Split fields into chunks to keep within Discord's limits
+	const fieldChunks = chunkFields(fields, config.fieldsPerRow);
+
+	// Create embeds for each chunk
+	return fieldChunks.map((chunk, index) => {
+		const embed = new EmbedBuilder().setColor(config.clogColor).addFields(chunk);
+
+		// Add title and description only to the first embed
+		if (index === 0) {
+			embed
+				.setTitle(`Collection Log Highscores`)
+				.setDescription(
+					`Top 25 Collection Log hunters for ${groupDetails.name}\nData from the [Wise Old Man](https://wiseoldman.net/groups/7154)`,
+				)
+				.setThumbnail('https://oldschool.runescape.wiki/images/Collection_log.png');
+		}
+
+		// Add footer only to the last embed
+		if (index === fieldChunks.length - 1) {
+			let footerText = `Total Members: ${groupDetails.memberCount}`;
+			// Add page numbers if enabled
+			if (config.showPageNumbers && fieldChunks.length > 1) {
+				footerText += ` | Page ${index + 1}/${fieldChunks.length}`;
+			}
+			embed.setFooter({ text: footerText }).setTimestamp();
+		} else if (config.showPageNumbers) {
+			// Add page numbering to intermediate embeds if enabled
+			embed.setFooter({ text: `Page ${index + 1}/${fieldChunks.length}` });
+		}
+
+		return embed;
+	});
+}
+
 // Handle the highscore command execution
 async function executeHighscoreCommand(interaction) {
 	try {
@@ -257,6 +324,36 @@ async function executeHighscoreCommand(interaction) {
 		}
 		await interaction.deferReply(); // Let Discord know we're working on it
 		const metricType = interaction.options.getString('type');
+		// Handle collection log option separately
+		if (metricType === 'clog') {
+			const { dets } = await fetchStats();
+			const clogEntries = await getClogHighscores();
+			if (!clogEntries || clogEntries.length === 0) {
+				return interaction.editReply('No collection log data available.');
+			}
+			// Create Discord embeds for collection log
+			const discordEmbeds = prepareClogEmbeds(
+				clogEntries,
+				dets,
+				interaction.client,
+				interaction.guild,
+			);
+			// Discord has a limit of 10 embeds per message
+			const MAX_EMBEDS_PER_MESSAGE = 10;
+			// Send the first batch
+			await interaction.editReply({ embeds: discordEmbeds.slice(0, MAX_EMBEDS_PER_MESSAGE) });
+			// If there are more than 10 embeds, send them as follow-up messages
+			for (
+				let i = MAX_EMBEDS_PER_MESSAGE;
+				i < discordEmbeds.length;
+				i += MAX_EMBEDS_PER_MESSAGE
+			) {
+				const embedBatch = discordEmbeds.slice(i, i + MAX_EMBEDS_PER_MESSAGE);
+				await interaction.followUp({ embeds: embedBatch });
+			}
+			return;
+		}
+		// For other metric types, proceed as before
 		// Map "minigames" option to the correct API value
 		const apiMetricType = metricType === 'minigames' ? 'activities' : metricType;
 		// Fetch the data
