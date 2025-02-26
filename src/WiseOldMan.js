@@ -38,24 +38,13 @@ async function fetchStats() {
 }
 
 async function getWOMMembers() {
-	const cacheKey = 'getWOMMembers';
-	const cachedData = cache.get(cacheKey);
-	if (cachedData) {
-		console.log('Returning cached WOM members.');
-		return cachedData;
-	}
 	try {
 		const csv = await wom.groups.getMembersCSV(WOM_GROUP_NUMBER);
 		const members = parseCSV(csv);
-		cache.set(cacheKey, members);
-		console.log('Fetched and cached fresh WOM members.');
+		console.log('Fetched and parsed WOM Members.');
 		return members;
 	} catch (error) {
 		console.error('Error fetching WOM members:', error);
-		if (cachedData) {
-			console.log('Returning stale cached WOM members due to error.');
-			return cachedData;
-		}
 		return [];
 	}
 }
