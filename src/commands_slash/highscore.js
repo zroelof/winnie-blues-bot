@@ -58,7 +58,7 @@ function formatNumber(num) {
 // Find an emoji from the client or guild cache
 function findEmoji(client, guild, emojiName) {
 	if (!emojiName) {
-		console.error("No Emoji Name!")
+		console.error('No Emoji Name!');
 		return null;
 	}
 	try {
@@ -95,6 +95,7 @@ function processMetrics(stats, metricType) {
 		// Create a leader entry based on metric type
 		let leader = {
 			username: topPlayer.player.displayName || topPlayer.player.username,
+			type: topPlayer.player.type,
 			rank: topPlayer.rank || 0,
 		};
 		// Add metric-specific properties
@@ -133,8 +134,9 @@ function createFields(highscores, metricType, client, guild) {
 			};
 		}
 		const leader = leaders[0];
+		const emojiStr = findEmoji(client, guild, leader.type);
 		// Create content with proper spacing for better alignment
-		let lines = [`**${leader.username}**`];
+		let lines = [`${emojiStr ? emojiStr : ''} **${leader.username}**`];
 		// Add metric-specific details
 		if (metricType === 'skills') {
 			if (metric === 'overall') {
