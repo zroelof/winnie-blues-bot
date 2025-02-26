@@ -131,3 +131,4 @@ dist
 .pnp.*
 
 dynamic/
+src/config/index.js
