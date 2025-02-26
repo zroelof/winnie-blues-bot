@@ -42,13 +42,27 @@
 -   **Install Dependencies**:
     -   In the project directory, run `npm install` to install all required dependencies.
 -   **Set Up Environment Variables**:
-    -   Create a `.env` file in the root directory of the project.
+
+    -   Create a `./src/config/index.js` or `./src/config.js` file in the root directory of the project.
     -   Add the following lines, replacing placeholders with actual values:
+
         ```
-        BOT_TOKEN=your_discord_bot_token
-        WOM_API_KEY=your_wom_api_key
-        WOM_GROUP_NUMBER=your_wom_group_number
-        WOM_SECURITY_CODE=your_wom_security_code
+        // Set to true if your application has extra commands that need to be cleared
+        module.exports.CLEAR_BOT_COMMANDS = false;
+        // Set to true if you need to register the rsn or highscore command
+        module.exports.REGISTER_BOT_COMMANDS = false;
+
+        module.exports.DISCORD_BOT_TOKEN = 'yourBotToken';
+
+        module.exports.WOM_USER_AGENT = '@yourDiscordHandle';
+        module.exports.WOM_API_KEY = 'yourApiKeyOrBlank';
+        module.exports.WOM_GROUP_NUMBER = 'yourGroupNumber';
+        module.exports.WOM_SECURITY_CODE = 'groupSecurityCode';
+
+        module.exports.EXCLUDED_ROLES = new Set([
+        'owner','deputy owner','coordinator',
+        'admin','saviour','server bots',
+        ]);
         ```
 
 ### Running the Bot
@@ -67,13 +81,9 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 
 ## Features
 
-### Auto-Tracking
-
--   **Automatically refreshes** WOM group data nightly at midnight (AEST).
-
 ### Automated Rank-Roles
 
--   Every `5th minute` (e.g. xx:00, xx:05, xx:10, xx:15, ...) the bot utilizes the WiseOldMan API to fetch a map of all
+-   Every minute the bot utilizes the WiseOldMan API to fetch a map of all
     in-game member rsns and their rank.
 -   The bot then looks up all members in all of its Discord servers, and checks if their nickname matches an in-game rsn.
 -   Multiple RSNs are supported in member nicknames, use: `|`, `&` or `/` to delimit each RSN.
@@ -90,6 +100,7 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 ### Commands
 
 -   **`/rsn <your-rsn>`** sets the supplied rsn as the users nickname in the server.
+-   **`/highscore <type>`** sends embeds for the selected highscores.
 
 ### Reactions
 
@@ -98,4 +109,8 @@ When invited to a server, the bot creates a `@<bot-name>` role.
 ### Status Updates
 
 -   **Updates** the bot's status **every minute** with random stats from the clan.
--   **Fetches** new data from the WiseOldMan API every `6th hour` (e.g. 00:00, 06:00, 12:00, 18:00).
+-   **Caches** data for 1 hour.
+
+### Group Updates
+
+-   **Updates** the WiseOldMan group every `6th hour` (e.g. 00:00, 06:00, 12:00, 18:00).

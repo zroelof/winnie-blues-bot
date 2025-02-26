@@ -1,7 +1,12 @@
+module.exports = {
+	expression: '*/30 * * * * *', //every 30s
+	async execute(client) {
+		await updateStatus(client);
+	},
+};
 const { ActivityType } = require('discord-api-types/v10');
-const { fetchStats } = require('./WiseOldMan');
-const { capitalizeWords } = require('./Util');
-const { bot } = require('./Bot');
+const { fetchStats } = require('../WiseOldMan');
+const { capitalizeWords } = require('../utils');
 
 let messageQueue = [];
 let timer;
@@ -20,7 +25,7 @@ async function regenerateMessages() {
 	}
 }
 
-async function updateStatus() {
+async function updateStatus(bot) {
 	if (!messageQueue.length) {
 		await regenerateMessages();
 	}
@@ -127,5 +132,3 @@ function shuffleMessages(array) {
 		[array[i], array[j]] = [array[j], array[i]];
 	}
 }
-
-module.exports = { updateStatus };

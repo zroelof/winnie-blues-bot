@@ -1,16 +1,14 @@
-// syncRoles.js
-const { fetchStats, getWOMMembers } = require('./WiseOldMan');
-const { standardize } = require('./Util');
-const { removeMultipleUsers } = require('./WaitlistSQL');
+module.exports = {
+	expression: '*/1 * * * *',
+	async execute(client) {
+		return await syncRoles(client);
+	},
+};
 
-const EXCLUDED_ROLES = new Set([
-	'owner',
-	'deputy owner',
-	'coordinator',
-	'admin',
-	'saviour',
-	'server bots',
-]);
+const { fetchStats, getWOMMembers } = require('../WiseOldMan');
+const { standardize } = require('../utils');
+const { EXCLUDED_ROLES } = require('../config');
+
 let isSyncingRoles = false;
 
 async function syncRoles(bot) {
@@ -22,12 +20,15 @@ async function syncRoles(bot) {
 	try {
 		console.log('Starting role synchronization with WOM...');
 		const startTime = Date.now();
-		// Fetch stats and members concurrently
-		const [statsResult, womMembersArray] = await Promise.all([fetchStats(), getWOMMembers()]);
+		const womMembersArray = await getWOMMembers();
+		if (!womMembersArray || !Array.isArray(womMembersArray) || [] === womMembersArray) {
+			console.error('Failed to fetch members.');
+			return;
+		}
 		//console.log('Fetched stats and WOM members.');
-		const { dets } = statsResult;
-		if (!dets || !womMembersArray) {
-			console.error('Failed to fetch details or members. Aborting role synchronization.');
+		const { dets } = await fetchStats();
+		if (!dets) {
+			console.error('Failed to fetch details.');
 			return;
 		}
 		// Convert WOM members array to a Map for efficient lookup
@@ -63,7 +64,7 @@ async function syncGuildRoles(guild, womMemberMap, rankHierarchy, botId) {
 			.filter(([_, role]) => role !== undefined),
 	);
 	if (!guestRole || !winniesRole) {
-		console.error(`Failed finding required roles in guild: ${guild.name}`);
+		console.error(`Failed finding guest/winnies role in guild: ${guild.name}`);
 		return;
 	}
 	if (rankRoles.size !== rankHierarchy.length) {
@@ -74,13 +75,11 @@ async function syncGuildRoles(guild, womMemberMap, rankHierarchy, botId) {
 	const botMember = await guild.members.fetch(botId);
 	const botRole = botMember.roles.highest;
 	const members = await guild.members.fetch();
-
 	// Preprocess WOM member map for efficient lookup
 	const standardizedWOMMemberMap = new Map();
 	for (const [womRsn, womRank] of womMemberMap) {
 		standardizedWOMMemberMap.set(standardize(womRsn), womRank);
 	}
-
 	const updates = [];
 	for (const member of members.values()) {
 		if (member.user.bot) continue;
@@ -95,12 +94,6 @@ async function syncGuildRoles(guild, womMemberMap, rankHierarchy, botId) {
 		if (update) updates.push(update);
 	}
 	await updateRoles(guild, updates, botRole);
-	const usersToRemoveFromWaitlist = updates
-		.filter(update => update.removeFromWaitlist)
-		.map(update => update.memberId);
-	if (usersToRemoveFromWaitlist.length > 0) {
-		await removeMultipleUsers(usersToRemoveFromWaitlist);
-	}
 }
 
 function processMemberRoles(
@@ -112,13 +105,11 @@ function processMemberRoles(
 	rankRoles,
 ) {
 	const memberRoles = new Set(member.roles.cache.map(r => r.id));
-
 	if (
 		[...member.roles.cache.values()].some(role => EXCLUDED_ROLES.has(role.name.toLowerCase()))
 	) {
 		return handleExcludedMember(member.id, guestRole, winniesRole, memberRoles);
 	}
-
 	let displayNames = [
 		member.nickname || '',
 		member.user.globalName || '',
@@ -127,7 +118,6 @@ function processMemberRoles(
 		.flatMap(name => name.split(/\s-\s|[\/|\\]/).filter(part => part.trim() !== ''))
 		.map(name => name.trim())
 		.filter(name => name);
-
 	const memberRanks = [];
 	for (const name of displayNames) {
 		const standardizedName = standardize(name);
@@ -137,15 +127,12 @@ function processMemberRoles(
 			break; // Found a match, no need to check other names
 		}
 	}
-
 	if (memberRanks.length === 0) {
 		return handleNonMember(member.id, guestRole, winniesRole, memberRoles, rankRoles);
 	}
-
 	const highestRank = memberRanks.reduce((highest, current) =>
 		rankHierarchy.indexOf(current) > rankHierarchy.indexOf(highest) ? current : highest,
 	);
-
 	return synchronizeMemberRoles(
 		member.id,
 		highestRank,
@@ -257,5 +244,3 @@ async function updateRoles(guild, updates, botRole) {
 		}
 	}
 }
-
-module.exports = { syncRoles };

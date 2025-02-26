@@ -1,10 +1,11 @@
 // WiseOldMan.js
 const { WOMClient } = require('@wise-old-man/utils');
 const NodeCache = require('node-cache');
+const { WOM_API_KEY, WOM_USER_AGENT, WOM_GROUP_NUMBER } = require('./config');
 
 const wom = new WOMClient({
-	apiKey: process.env.WOM_API_KEY,
-	userAgent: '@roelof',
+	apiKey: WOM_API_KEY,
+	userAgent: WOM_USER_AGENT,
 });
 
 // Initialize cache with a TTL of 1 hour
@@ -19,8 +20,8 @@ async function fetchStats() {
 	}
 	try {
 		const [dets, stats] = await Promise.all([
-			wom.groups.getGroupDetails(process.env.WOM_GROUP_NUMBER),
-			wom.groups.getGroupStatistics(process.env.WOM_GROUP_NUMBER),
+			wom.groups.getGroupDetails(WOM_GROUP_NUMBER),
+			wom.groups.getGroupStatistics(WOM_GROUP_NUMBER),
 		]);
 		const data = { dets, stats };
 		cache.set(cacheKey, data);
@@ -44,7 +45,7 @@ async function getWOMMembers() {
 		return cachedData;
 	}
 	try {
-		const csv = await wom.groups.getMembersCSV(process.env.WOM_GROUP_NUMBER);
+		const csv = await wom.groups.getMembersCSV(WOM_GROUP_NUMBER);
 		const members = parseCSV(csv);
 		cache.set(cacheKey, members);
 		console.log('Fetched and cached fresh WOM members.');

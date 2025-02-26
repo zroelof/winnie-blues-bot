@@ -1,4 +1,3 @@
-const { bot } = require('./Bot');
 const capitalizeWords = metricName => {
 	return metricName
 		.replace(/_/g, ' ')
@@ -11,7 +10,7 @@ function standardize(str) {
 	return str.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-async function findOrCreateMessage(channel) {
+async function findOrCreateMessage(bot, channel) {
 	const messages = await channel.messages.fetch({ limit: 10 });
 	const botMessages = messages.filter(msg => msg.author.id === bot.user.id);
 	if (botMessages.size > 0) {

@@ -2,9 +2,9 @@
 	"name": "winnie-blue-bot",
 	"version": "1.0.0",
 	"description": "Automatic discord role management via WiseOldMan.",
-	"main": "Run.js",
+	"main": "/run.js",
 	"scripts": {
-		"start": "node Run.js",
+		"start": "node ./run.js",
 		"prettier": "prettier --write \"**/*.{js,ts,json,css,scss,md,html}\""
 	},
 	"keywords": [],

@@ -1,13 +1,20 @@
+module.exports = {
+	expression: '*/1 * * * *', //every minute
+	async execute(client) {
+		return await updateMessage(client);
+	},
+};
+
 const { ActionRowBuilder, ButtonBuilder } = require('discord.js');
-const { wom } = require('./WiseOldMan');
-const { bot } = require('./Bot');
+const { wom } = require('../WiseOldMan');
 const { ChannelType, ButtonStyle } = require('discord-api-types/v10');
-const { findOrCreateMessage } = require('./Util');
+const { findOrCreateMessage } = require('../utils');
+const { WOM_GROUP_NUMBER } = require('../config');
 const CHANNEL_NAME = 'time-based-ranks';
 const excludedRsns = ['baford'];
 let activeCollector = null;
 
-async function updateMessage() {
+async function updateMessage(bot) {
 	const guilds = bot.guilds.cache.values();
 	for (const guild of guilds) {
 		let channel = guild.channels.cache.find(
@@ -20,9 +27,9 @@ async function updateMessage() {
 			continue;
 		}
 		const emojis = guild.emojis.cache;
-		const outdatedRanks = await checkTimeBasedRanks(process.env.WOM_GROUP_NUMBER);
+		const outdatedRanks = await checkTimeBasedRanks(WOM_GROUP_NUMBER);
 		const pages = preparePages(outdatedRanks, emojis, 1500);
-		let message = await findOrCreateMessage(channel);
+		let message = await findOrCreateMessage(bot, channel);
 		let components = prepareComponents(pages.length > 1, 0, pages.length);
 		const title = '## Timed Rank Role Status\n';
 		const footer = getFooterNote();
@@ -87,7 +94,7 @@ function getFooterNote() {
 	const now = Math.floor(Date.now() / 1000);
 	return (
 		`\n\n**Please Note:**` +
-		`\nThis relies on the [WOM Group](https://wiseoldman.net/groups/${process.env.WOM_GROUP_NUMBER}) being synced.` +
+		`\nThis relies on the [WOM Group](https://wiseoldman.net/groups/${WOM_GROUP_NUMBER}) being synced.` +
 		`\nUse the [WOM Plugin](https://runelite.net/plugin-hub/show/wom-utils) to sync after making any rank changes.` +
 		`\nLast Updated <t:${now}:R>.`
 	);
@@ -177,5 +184,3 @@ function needsRankUp(rankNow, nextRank, hierarchy) {
 	const nextRankIdx = hierarchy[nextRank];
 	return rankIdx !== undefined && nextRankIdx !== undefined && rankIdx > nextRankIdx;
 }
-
-module.exports = { updateMessage };

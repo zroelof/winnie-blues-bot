@@ -1,72 +1,56 @@
-const { Client, GatewayIntentBits } = require('discord.js');
-const { registerCommands } = require('./Commands');
-const { addUser, removeUser } = require('./WaitlistSQL');
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
+const { DISCORD_BOT_TOKEN } = require('./config');
 
-const bot = new Client({
+const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildMembers,
 		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.GuildPresences,
+		GatewayIntentBits.DirectMessages,
 		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.GuildModeration,
+	],
+	partials: [
+		Partials.Channel,
+		Partials.Message,
+		Partials.Reaction,
+		Partials.User,
+		Partials.GuildMember,
 	],
 });
 
-bot.on('ready', async () => {
-	await registerCommands(bot);
-	console.log(`Logged in as ${bot.user.tag}!`);
-});
+// Load Events
+const eventFiles = fs
+	.readdirSync(path.join(__dirname, './events'))
+	.filter(file => file.endsWith('.js'));
 
-bot.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) {
-		return;
-	}
-	await interaction.deferReply({ ephemeral: true });
-	const { commandName, options } = interaction;
-	try {
-		if (commandName === 'rsn') {
-			const rsn = options.getString('rsn');
-			console.log('Setting RSN for:', interaction.member.user.username, 'to:', rsn);
-			await interaction.member.setNickname(rsn);
-			await interaction.editReply(`Your nickname has been set to \`\`${rsn}\`\``);
-		} else if (commandName === 'waitlist') {
-			const id = interaction.member.user.id;
-			const message = await addUser(id);
-			await interaction.editReply(`${message}`);
-		} else if (commandName === 'waitlist-leave') {
-			const id = interaction.member.user.id;
-			const message = await removeUser(id);
-			await interaction.editReply(`${message}`);
-		} else if (commandName === 'waitlist-remove') {
-			if (!interaction.memberPermissions.has('Administrator')) {
-				await interaction.editReply('You do not have permission to use this command.');
-				return;
+for (const file of eventFiles) {
+	const event = require(`./events/${file}`);
+	if (event.once) {
+		client.once(event.name, (...args) => {
+			try {
+				event.execute(...args, client);
+			} catch (e) {
+				console.error(`Threw exception handling event ${file}:\n${e}`);
 			}
-			const user = options.getUser('user');
-			const userId = user ? user.id : options.getString('id');
-			if (!userId) {
-				await interaction.editReply('No user specified.');
-				return;
+		});
+	} else {
+		client.on(event.name, (...args) => {
+			try {
+				event.execute(...args, client);
+			} catch (e) {
+				console.error(`Threw exception handling event ${file}:\n${e}`);
 			}
-			const message = await removeUser(userId);
-			await interaction.editReply(`${message}`);
-		}
-	} catch (error) {
-		console.error(error);
-		await interaction.editReply(
-			'There was an error trying to execute your command:\n``' + error + '``',
-		);
+		});
 	}
-});
+}
 
-bot.on('messageCreate', async message => {
-	if (message.channel.name.endsWith('-⊱newcomers')) {
-		try {
-			await message.react('🫡');
-		} catch (error) {
-			console.error('Failed to react to message:', error);
-		}
-	}
-});
+if (!DISCORD_BOT_TOKEN || DISCORD_BOT_TOKEN === 'discord_bot_token_XXX') {
+	console.error('Provide a valid discord bot token.');
+	return;
+}
 
-module.exports = { bot };
+module.exports = client;
