@@ -79,5 +79,5 @@ if [ -f "/tmp/winnie-backup/index.js" ]; then
     cp "/tmp/winnie-backup/index.js" "$CONFIG_FILE"
     rm -rf /tmp/winnie-backup
 fi
-
+chmod +x "$BASE_DIRECTORY_PATH/update.sh"
 echo "Repository successfully downloaded to $BASE_DIRECTORY_PATH"
