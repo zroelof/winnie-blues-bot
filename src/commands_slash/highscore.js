@@ -170,7 +170,7 @@ function createClogFields(clogEntries, client, guild) {
 	return clogEntries.map((entry, index) => {
 		const accountEmojiStr = findEmoji(client, guild, entry.player.type);
 		const value = [
-			`**${entry.player.displayName}** ${accountEmojiStr ? accountEmojiStr : ''}`,
+			`${accountEmojiStr ? accountEmojiStr : ''} **${entry.player.displayName}**`,
 			`Logs: ${formatNumber(entry.data.score)}`,
 			`Rank: ${formatNumber(entry.data.rank)}`,
 		].join('\n');
@@ -288,7 +288,7 @@ function prepareClogEmbeds(clogEntries, groupDetails, client, guild) {
 			embed
 				.setTitle(`Collection Log Highscores`)
 				.setDescription(
-					`Top 25 Collection Log hunters for ${groupDetails.name}\nData from the [Wise Old Man](https://wiseoldman.net/groups/7154)`,
+					`Top Collection Log hunters for ${groupDetails.name}\nData from the [Wise Old Man](https://wiseoldman.net/groups/7154)`,
 				)
 				.setThumbnail('https://oldschool.runescape.wiki/images/Collection_log.png');
 		}
