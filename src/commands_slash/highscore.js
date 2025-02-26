@@ -57,15 +57,19 @@ function formatNumber(num) {
 
 // Find an emoji from the client or guild cache
 function findEmoji(client, guild, emojiName) {
+	if (!emojiName) {
+		console.error("No Emoji Name!")
+		return null;
+	}
 	try {
 		// Try to find in client's emoji cache (global bot emojis)
 		let emoji = client.emojis.cache.find(
-			emoji => emoji.name.toLowerCase() === emojiName.toLowerCase(),
+			emoji => emoji.name.toLowerCase() === emojiName.trim().toLowerCase(),
 		);
 		// If not found in client's emojis, check guild's emojis
 		if (!emoji && guild) {
 			emoji = guild.emojis.cache.find(
-				emoji => emoji.name.toLowerCase() === emojiName.toLowerCase(),
+				emoji => emoji.name.toLowerCase() === emojiName.trim().toLowerCase(),
 			);
 		}
 		// Return the emoji in the format Discord expects, or null if not found
@@ -164,7 +168,6 @@ function createFields(highscores, metricType, client, guild) {
 // Create fields for collection log entries
 function createClogFields(clogEntries, client, guild) {
 	return clogEntries.map((entry, index) => {
-		console.log('ClogEntry:', JSON.stringify(entry));
 		const accountEmojiStr = findEmoji(client, guild, entry.player.type);
 		const value = [
 			`**${entry.player.displayName}** ${accountEmojiStr ? accountEmojiStr : ''}`,
@@ -273,16 +276,13 @@ function prepareClogEmbeds(clogEntries, groupDetails, client, guild) {
 	if (!clogEntries || clogEntries.length === 0) {
 		return [];
 	}
-
 	// Create fields for collection log entries
 	const fields = createClogFields(clogEntries);
 	// Split fields into chunks to keep within Discord's limits
 	const fieldChunks = chunkFields(fields, config.fieldsPerRow);
-
 	// Create embeds for each chunk
 	return fieldChunks.map((chunk, index) => {
 		const embed = new EmbedBuilder().setColor(config.clogColor).addFields(chunk);
-
 		// Add title and description only to the first embed
 		if (index === 0) {
 			embed
@@ -292,7 +292,6 @@ function prepareClogEmbeds(clogEntries, groupDetails, client, guild) {
 				)
 				.setThumbnail('https://oldschool.runescape.wiki/images/Collection_log.png');
 		}
-
 		// Add footer only to the last embed
 		if (index === fieldChunks.length - 1) {
 			let footerText = `Total Members: ${groupDetails.memberCount}`;
@@ -305,7 +304,6 @@ function prepareClogEmbeds(clogEntries, groupDetails, client, guild) {
 			// Add page numbering to intermediate embeds if enabled
 			embed.setFooter({ text: `Page ${index + 1}/${fieldChunks.length}` });
 		}
-
 		return embed;
 	});
 }
